@@ -1,148 +1,135 @@
-import 'package:dhanyan/screens/property_details_screen.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/product_model.dart';
 
-class PropertyItemTile extends StatefulWidget {
-  final PropertyModel property;
+class ProductTile extends StatelessWidget {
+  final ProductModel product;
 
-  const PropertyItemTile({super.key, required this.property});
-
-  @override
-  State<PropertyItemTile> createState() => _PropertyItemTileState();
-}
-
-class _PropertyItemTileState extends State<PropertyItemTile> {
-  bool isFavorite = false;
+  const ProductTile({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PropertyDetailScreen(property: widget.property),
-          ),
-        );
-      },
+    return Card(
+      elevation: 5,
+      shadowColor: Colors.black12,
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            )
-          ],
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              Colors.grey.shade50,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        child: Column(
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
+            // Product Image with Animation
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-              child: Stack(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.network(
+                product.imageUrl.startsWith("http")
+                    ? product.imageUrl
+                    : "https://via.placeholder.com/120",
+                width: 75,
+                height: 75,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.broken_image, size: 40),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(width: 14),
+
+            // Product Info Section
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.network(
-                    widget.property.imageUrl,
-                    height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        const SizedBox(height: 140, child: Icon(Icons.image_not_supported, size: 40)),
+                  // Name
+                  Text(
+                    product.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
 
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
-                      },
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: Colors.deepPurple,
-                          size: 18,
+                  const SizedBox(height: 6),
+
+                  // Price
+                  Row(
+                    children: [
+                      Icon(Icons.currency_rupee,
+                          size: 15, color: Colors.green.shade700),
+                      Text(
+                        product.price.toString(),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+                    ],
+                  ),
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Type Tag
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        // ignore: deprecated_member_use
-                        color: Colors.blue.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        widget.property.type,
-                        style: const TextStyle(fontSize: 11, color: Colors.deepPurple),
-                      ),
-                    ),
+                  const SizedBox(height: 6),
 
-                    const SizedBox(height: 6),
-
-                    // Title
-                    Text(
-                      widget.property.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    const SizedBox(height: 4),
-
-                    // Location
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined, size: 14, color: Colors.deepPurple),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            widget.property.location,
-                            style: const TextStyle(fontSize: 12, color: Colors.deepPurple),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                  // Availability + Date
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: product.weight
+                              ? Colors.green.shade100
+                              : Colors.red.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          product.weight ? "Available" : "Out of Stock",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: product.weight
+                                ? Colors.green.shade700
+                                : Colors.red.shade700,
                           ),
                         ),
-                      ],
-                    ),
-
-                    const Spacer(),
-
-                    // Price
-                    Text(
-                      "\$${widget.property.price}/month",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.deepPurple,
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 10),
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              size: 13, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            product.date,
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),

@@ -1,16 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-abstract class PropertyEvent extends Equatable {
+abstract class ProductEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class FetchPropertiesEvent extends PropertyEvent {}
+class FetchProducts extends ProductEvent {
+  final bool isRefresh;
 
-class SearchPropertyEvent extends PropertyEvent {
-  final String query;
-  SearchPropertyEvent(this.query);
+  FetchProducts({this.isRefresh = false});
+}
 
-  @override
-  List<Object?> get props => [query];
+class DeleteProduct extends ProductEvent {
+  final String id;
+  DeleteProduct(this.id);
 }

@@ -1,42 +1,48 @@
-import 'package:dhanyan/bloc/product_event.dart';
-import 'package:dhanyan/bloc/product_state.dart';
-import 'package:dhanyan/data/repositories/product_repository.dart';
+import 'package:dhanyan/data/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'product_event.dart';
+import 'product_state.dart';
+import '../../data/repositories/product_repository.dart';
+
+class ProductBloc extends Bloc<ProductEvent, ProductState> {
+  final ProductRepository repository;
+  int page = 1;
+
+  ProductBloc({required this.repository}) : super(const ProductState()) {
+    on<FetchProducts>(_onFetchProducts);
+  }
+
+  Future<void> _onFetchProducts(
+      FetchProducts event, Emitter<ProductState> emit) async {
+    if (state.isLoading || !state.hasMore) return;
+
+    emit(state.copyWith(isLoading: true));
+
+    if (event.isRefresh) {
+      page = 1;
+    }
+
+    final newProducts = await repository.fetchProducts(page);
+
+    emit(
+      state.copyWith(
+        products: event.isRefresh
+            ? newProducts
+            : [...state.products, ...newProducts],
+        hasMore: newProducts.isNotEmpty,
+        isLoading: false,
+      ),
+    );
+
+    if (newProducts.isNotEmpty) page++;
 
 
-class PropertyBloc extends Bloc<PropertyEvent, PropertyState> {
-  final PropertyRepository repo;
+    on<DeleteProduct>((event, emit) {
+  final updatedList = List<ProductModel>.from(state.products)
+    ..removeWhere((p) => p.id == event.id);
 
-  PropertyBloc(this.repo) : super(const PropertyState()) {
-    // Fetch Properties
-    on<FetchPropertiesEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
+  emit(state.copyWith(products: updatedList));
+});
 
-      try {
-        final list = await repo.getProperties(page: 1);
-
-        emit(state.copyWith(
-          isLoading: false,
-          properties: list,
-          allProperties: list,
-        ));
-      } catch (e) {
-        emit(state.copyWith(
-          isLoading: false,
-          error: e.toString(),
-        ));
-      }
-    });
-
-    on<SearchPropertyEvent>((event, emit) {
-      final query = event.query.toLowerCase();
-
-      final filtered = state.allProperties.where((p) {
-        return p.title.toLowerCase().contains(query) ||
-            p.location.toLowerCase().contains(query);
-      }).toList();
-
-      emit(state.copyWith(properties: filtered));
-    });
   }
 }

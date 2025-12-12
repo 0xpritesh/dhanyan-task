@@ -1,33 +1,29 @@
-import 'package:dhanyan/data/models/product_model.dart';
 import 'package:equatable/equatable.dart';
+import '../../data/models/product_model.dart';
 
-class PropertyState extends Equatable {
+class ProductState extends Equatable {
+  final List<ProductModel> products;
   final bool isLoading;
-  final List<PropertyModel> properties;       
-  final List<PropertyModel> allProperties;    
-  final String error;
+  final bool hasMore;
 
-  const PropertyState({
+  const ProductState({
+    this.products = const [],
     this.isLoading = false,
-    this.properties = const [],
-    this.allProperties = const [],
-    this.error = "",
+    this.hasMore = true,
   });
 
-  PropertyState copyWith({
+  ProductState copyWith({
+    List<ProductModel>? products,
     bool? isLoading,
-    List<PropertyModel>? properties,
-    List<PropertyModel>? allProperties,
-    String? error,
+    bool? hasMore,
   }) {
-    return PropertyState(
+    return ProductState(
+      products: products ?? this.products,
       isLoading: isLoading ?? this.isLoading,
-      properties: properties ?? this.properties,
-      allProperties: allProperties ?? this.allProperties,
-      error: error ?? this.error,
+      hasMore: hasMore ?? this.hasMore,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, properties, allProperties, error];
+  List<Object?> get props => [products, isLoading, hasMore];
 }
