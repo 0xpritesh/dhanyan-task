@@ -5,7 +5,7 @@ class ProductModel {
   final double price;
   final String imageUrl;
   final String date;
-  final bool weight; // API returns boolean
+  final bool weight; 
 
   ProductModel({
     required this.id,

@@ -67,14 +67,14 @@ return Dismissible(
 
   confirmDismiss: (direction) async {
     if (direction == DismissDirection.endToStart) {
-      // INFO swipe → do NOT dismiss item
+     
       showDialog(
         context: context,
         builder: (_) => ProductDetailScreen(product: product),
       );
-      return false; // ❗ prevents dismiss
+      return false; 
     }
-    return true; // allow delete
+    return true; 
   },
 
   onDismissed: (direction) {
