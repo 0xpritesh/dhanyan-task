@@ -36,7 +36,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
           if (state.products.isEmpty) {
-            // Show loading or empty message
             return state.hasMore
                 ? const Center(child: CircularProgressIndicator())
                 : const Center(child: Text("No products found"));
@@ -56,7 +55,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
               return GestureDetector(
                 onTap: () {
-                  // Open Product Detail Screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -73,7 +71,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
                   confirmDismiss: (direction) async {
-                    // Only allow swipe-to-delete
                     return direction == DismissDirection.startToEnd;
                   },
                   onDismissed: (direction) {

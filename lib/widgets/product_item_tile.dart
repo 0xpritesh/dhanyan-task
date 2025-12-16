@@ -8,6 +8,8 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAvailable = product.weight > 0;
+
     return Card(
       elevation: 5,
       shadowColor: Colors.black12,
@@ -28,7 +30,7 @@ class ProductTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-         
+            // Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: Image.network(
@@ -38,23 +40,21 @@ class ProductTile extends StatelessWidget {
                 width: 75,
                 height: 75,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 75,
-                    height: 75,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(Icons.broken_image, size: 40),
-                  );
-                },
+                errorBuilder: (_, __, ___) => Container(
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(Icons.broken_image, size: 40),
+                ),
               ),
             ),
 
             const SizedBox(width: 14),
 
-            // Product Info Section
+            // Product Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,10 +75,13 @@ class ProductTile extends StatelessWidget {
                   // Price
                   Row(
                     children: [
-                      Icon(Icons.currency_rupee,
-                          size: 15, color: Colors.green.shade700),
+                      Icon(
+                        Icons.currency_rupee,
+                        size: 15,
+                        color: Colors.green.shade700,
+                      ),
                       Text(
-                        product.price.toString(),
+                        product.price.toStringAsFixed(2),
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.green.shade700,
@@ -90,23 +93,22 @@ class ProductTile extends StatelessWidget {
 
                   const SizedBox(height: 6),
 
-                  // Availability + Date
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: product.weight
+                          color: isAvailable
                               ? Colors.green.shade100
                               : Colors.red.shade100,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          product.weight ? "Available" : "Out of Stock",
+                          isAvailable ? "Available" : "Out of Stock",
                           style: TextStyle(
                             fontSize: 12,
-                            color: product.weight
+                            color: isAvailable
                                 ? Colors.green.shade700
                                 : Colors.red.shade700,
                           ),
@@ -115,13 +117,18 @@ class ProductTile extends StatelessWidget {
                       const SizedBox(width: 10),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today,
-                              size: 13, color: Colors.grey),
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 13,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             product.date,
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       )
@@ -129,7 +136,7 @@ class ProductTile extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

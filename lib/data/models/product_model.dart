@@ -5,7 +5,7 @@ class ProductModel {
   final double price;
   final String imageUrl;
   final String date;
-  final bool weight; 
+  final double weight; // grams
 
   ProductModel({
     required this.id,
@@ -25,7 +25,7 @@ class ProductModel {
       price: double.tryParse(json['price'].toString()) ?? 0.0,
       imageUrl: json['imageUrl'] ?? '',
       date: json['date'] ?? '',
-      weight: json['Weight'] ?? false,
+      weight: double.tryParse(json['weight'].toString()) ?? 0.0,
     );
   }
 }
